@@ -58,6 +58,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::controller(StaffController::class)->group(function () {
             // Dashboard
             Route::get('/dashboard', 'showDashboard')->name('dashboard');
+            Route::get('/incidents', 'showIncidents')->name('incidents');
+            Route::get('/create-incidents', 'showCreateIncidents')->name('create-incidents');
+            Route::get('/report-incidents', 'showReportIncidents')->name('report-incidents');
+            Route::get('/assigned-incidents', 'showAssignedIncidents')->name('assigned-incidents');
+            Route::get('/resources', 'showResources')->name('resources');
+            Route::get('/notifications', 'showNotifications')->name('notifications');
+            Route::get('/profile', 'showProfile')->name('profile');
+            Route::put('/profile', 'updateProfile')->name('profile.update'); 
 
         });
     });
@@ -78,11 +86,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/stats', [AdminController::class, 'getStats'])->name('stats');
         });
         
-        // Staff API routes
-        Route::middleware(['role:doctor,nurse,staff'])->group(function () {
-            Route::get('/department-staff', [StaffController::class, 'getDepartmentStaff'])->name('department-staff');
-            Route::get('/my-tasks', [StaffController::class, 'getMyTasks'])->name('my-tasks');
-            Route::get('/recent-incidents', [StaffController::class, 'getRecentIncidents'])->name('recent-incidents');
-        });
+        
     });
 });

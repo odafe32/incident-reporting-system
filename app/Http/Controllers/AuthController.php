@@ -49,7 +49,7 @@ class AuthController extends Controller
                 'ip' => $request->ip(),
             ]);
 
-            // Role-based redirect - simplified
+            // Role-based redirect with success message
             return $this->redirectBasedOnRole($user);
         }
 
@@ -150,14 +150,13 @@ class AuthController extends Controller
      */
     private function redirectBasedOnRole(User $user)
     {
+        $welcomeMessage = "Welcome back, {$user->name}! You have successfully logged in.";
+        
         if ($user->isAdmin()) {
-            return redirect()->intended(route('admin.dashboard'));
+            return redirect()->intended(route('admin.dashboard'))->with('success', $welcomeMessage);
         } else {
             // All non-admin users go to staff dashboard
-            return redirect()->intended(route('staff.dashboard'));
+            return redirect()->intended(route('staff.dashboard'))->with('success', $welcomeMessage);
         }
     }
-
-
-
 }

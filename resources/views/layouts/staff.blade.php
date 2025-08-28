@@ -44,7 +44,7 @@
          <!-- leftbar-tab-menu -->
         <div class="leftbar-tab-menu">
             <div class="main-icon-menu">
-                <a href="{{ route('admin.dashboard') }}" class="logo logo-metrica d-block text-center">
+                <a href="{{ route('staff.dashboard') }}" class="logo logo-metrica d-block text-center">
                     <span>
                         <img src="{{ url('assets/images/logo-sm.png') }}" alt="logo-small" class="logo-sm">
                     </span>
@@ -62,7 +62,7 @@
                     </div><!--end /div-->
                 </div><!--end main-icon-menu-body-->
                 <div class="pro-metrica-end">
-                    <a href="#" class="profile">
+                    <a href="{{ route('staff.profile') }}" class="profile">
                         <img src="{{ url('assets/images/users/user-4.jpg') }}" alt="profile-user" class="rounded-circle thumb-sm">
                     </a>
                 </div><!--end pro-metrica-end-->
@@ -72,7 +72,7 @@
             <div class="main-menu-inner">
                 <!-- LOGO -->
                 <div class="topbar-left">
-                    <a href="{{ route('admin.dashboard') }}" class="logo">
+                    <a href="{{ route('staff.dashboard') }}" class="logo">
                         <span>
                             <img src="{{ url('assets/images/logo-dark.png') }}" alt="logo-large" class="logo-lg logo-dark">
                             <img src="{{ url('assets/images/logo.png') }}" alt="logo-large" class="logo-lg logo-light">
@@ -89,9 +89,35 @@
 
                         <ul class="nav flex-column">
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
+                                <a class="nav-link" href="{{ route('staff.dashboard') }}">Dashboard</a>
                             </li><!--end nav-item-->
-                         
+                           <li class="nav-item">
+                                <a class="nav-link" href="#sidebarINCIDENT" data-bs-toggle="collapse" role="button"
+                                    aria-expanded="false" aria-controls="sidebarINCIDENT">
+                               Incidents <span class="menu-arrow"></span>
+                                </a>
+                                <div class="collapse " id="sidebarINCIDENT">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('staff.incidents') }}">Incidents</a>
+                                        </li><!--end nav-item-->
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('staff.report-incidents') }}">Report Incidents</a>
+                                        </li><!--end nav-item-->
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="{{ route('staff.assigned-incidents') }}">Assigned Incidents</a>
+                                        </li><!--end nav-item-->
+                                        
+                                    </ul><!--end nav-->
+                                </div><!--end sidebarINCIDENT-->
+                            </li><!--end nav-item-->
+
+                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.resources') }}">Resources</a>
+                            </li><!--end nav-item-->
+                             <li class="nav-item">
+                                <a class="nav-link" href="{{ route('staff.notifications') }}">Notifications</a>
+                            </li><!--end nav-item-->
                         </ul><!--end nav-->
                     </div><!-- end Dashboards -->
 
@@ -161,7 +187,12 @@
                         <a class="nav-link dropdown-toggle nav-user" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="false" aria-expanded="false">
                             <div class="d-flex align-items-center">
-                                <img src="{{ url('empty.svg') }}" alt="profile-user" class="rounded-circle me-2 thumb-sm" />
+                                  @if($user->profile_image)
+                                    <img src="{{ Storage::url($user->profile_image) }}" alt="Profile Image" class="rounded-circle me-2 thumb-sm" id="profilePreview">
+                                @else
+                                    <img src="{{ url('empty.svg') }}" alt="profile-user" class="rounded-circle me-2 thumb-sm" />
+                                @endif
+                              
                                 <div>
                                     <small class="d-none d-md-block font-11">{{ auth()->user()->getDisplayRole() }}</small>
                                     <span class="d-none d-md-block fw-semibold font-12">{{ auth()->user()->name }} <i
@@ -170,7 +201,7 @@
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href=""><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
+                            <a class="dropdown-item" href="{{ route('staff.profile') }}"><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
                             
 
                             <div class="dropdown-divider mb-0"></div>
@@ -203,7 +234,7 @@
 
         <!-- Main Content Area -->
         <div class="page-wrapper">
-            <div class="page-content">
+            <div class="page-content-tab">
                 <!-- Flash Messages -->
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show m-3" role="alert" style="position: relative; z-index: 1050;">
@@ -234,6 +265,17 @@
                 @endif
 
                 @yield('content')
+                   
+                <!--Start Footer-->
+                <!-- Footer Start -->
+                <footer class="footer text-center text-sm-start">
+                    &copy; <script>
+                        document.write(new Date().getFullYear())
+                    </script> Metrica <span class="text-muted d-none d-sm-inline-block float-end">Crafted with <i
+                            class="mdi mdi-heart text-danger"></i> by Odafe Godfrey </span>
+                </footer>
+                <!-- end Footer -->                
+                <!--end footer-->
             </div>
         </div>
     
