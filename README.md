@@ -1,61 +1,124 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Hospital Incident Management & Resource Allocation System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Status: Active | License: MIT | Framework: Laravel 11.x
 
-## About Laravel
+# About the Project
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A web-based hospital management system built with Laravel,
+designed to streamline incident reporting, resource allocation, and emergency
+response. This project was developed to address the inefficiencies in
+traditional paper/manual hospital systems. It enables staff to report incidents
+in real time, allows administrators to allocate resources efficiently, and
+provides analytics for data-driven decision-making.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+·
+Authentication & Roles: Admin Dashboard,
+Hospital Staff (Doctors/Nurses)
 
-## Learning Laravel
+·
+Incident Reporting: Report emergencies &
+issues, track status (Pending → Assigned → Resolved)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+·
+Resource Allocation: Manage beds, ventilators,
+staff availability; auto/manual allocation
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+·
+Notifications: Real-time alerts via dashboard,
+email, or SMS
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+·
+Analytics & Reports: Incident trends,
+resource usage, response time tracking
 
-## Laravel Sponsors
+·
+Secure Data: Role-based access control,
+encrypted patient & hospital data
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Tech Stack
 
-### Premium Partners
+·
+Framework: Laravel (PHP 8+)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+·
+Frontend: Blade, Bootstrap, JavaScript
 
-## Contributing
+·
+Database: MySQL / PostgreSQL
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+·
+Real-time: Laravel Echo + Pusher / WebSockets
 
-## Code of Conduct
+·
+Auth: Laravel Breeze / Jetstream
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+·
+Charts/Reports: Chart.js / Laravel Charts
 
-## Security Vulnerabilities
+# Database Schema (Core Tables)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+·
+Users → Admins, Doctors, Nurses
 
-## License
+·
+Patients → Patient records (optional module)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+·
+Incidents → Reported issues (severity, status,
+location)
+
+·
+Resources → Beds, equipment, staff availability
+
+·
+Incident Actions → Actions taken to resolve
+incidents
+
+·
+Notifications → Alerts sent to users
+
+# Installation
+
+Clone the repo: git clone
+https://github.com/your-username/hospital-incident-management.git
+
+Install dependencies: composer install
+&& npm install && npm run dev
+
+Set up environment file: cp .env.example .env
+&& php artisan key:generate
+
+Configure database in .env, then migrate: php artisan migrate --seed
+
+Run the server: php artisan serve
+
+# Usage
+
+Admin: Log in → Manage incidents, allocate resources,
+generate reports.
+
+Hospital Staff: Report incidents, view assignments, mark
+incidents as resolved.
+
+# Contributing
+
+Pull requests are welcome! To contribute: fork the repo,
+create a feature branch, and submit a pull request.
+
+# Security
+
+If you discover a security issue, please create a private
+issue or contact the maintainer directly.
+
+# License
+
+This project is open-sourced software licensed under the MIT
+license.
+
+# Author
+
+Name: Odafe Godfrey
+
+Email: Godfreyj.sule1@gmail.com
