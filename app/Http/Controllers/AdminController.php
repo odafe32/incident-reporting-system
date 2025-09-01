@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
-
+use App\Services\NotificationService;
 
 class AdminController extends Controller
 {
@@ -27,4 +27,50 @@ class AdminController extends Controller
 
         return view('admin.dashboard')->with($viewData);
     }
+
+
+/**
+ * Assign incident to staff member
+ */
+public function assignIncident(Request $request, $id)
+{
+    $request->validate([
+        'assigned_to' => 'required|exists:users,id',
+    ]);
+
+    $incident = Incident::with(['reporter', 'assignedUser'])->findOrFail($id);
+    $assignedUser = User::findOrFail($request->assigned_to);
+    $admin = Auth::user();
+
+    // Update incident
+    $incident->update([
+        'assigned_to' => $request->assigned_to,
+        'status' => 'assigned',
+    ]);
+
+    // Create action log
+    IncidentAction::create([
+        'incident_id' => $incident->id,
+        'user_id' => $admin->id,
+        'action_type' => 'assignment',
+        'message' => "Incident assigned to {$assignedUser->name}",
+    ]);
+
+    // Send notification to assigned user
+    NotificationService::createIncidentAssignedNotification($incident, $assignedUser, $admin);
+
+    // Send notification to reporter
+    if ($incident->reporter) {
+        NotificationService::createIncidentUpdatedNotification(
+            $incident, 
+            $incident->reporter, 
+            'status_change'
+        );
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Incident assigned successfully',
+    ]);
+}
 }

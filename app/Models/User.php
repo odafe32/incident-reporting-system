@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -67,6 +68,46 @@ class User extends Authenticatable
     const DEPT_CARDIOLOGY = 'Cardiology';
     const DEPT_PEDIATRICS = 'Pediatrics';
     const DEPT_ONCOLOGY = 'Oncology';
+
+    /**
+     * Get incidents reported by this user
+     */
+    public function reportedIncidents(): HasMany
+    {
+        return $this->hasMany(Incident::class, 'reported_by');
+    }
+
+    /**
+     * Get incidents assigned to this user
+     */
+    public function assignedIncidents(): HasMany
+    {
+        return $this->hasMany(Incident::class, 'assigned_to');
+    }
+
+    /**
+     * Get incident actions by this user
+     */
+    public function incidentActions(): HasMany
+    {
+        return $this->hasMany(IncidentAction::class);
+    }
+
+    /**
+     * Get notifications for this user
+     */
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get unread notifications count
+     */
+    public function getUnreadNotificationsCount(): int
+    {
+        return $this->notifications()->unread()->count();
+    }
 
     /**
      * Check if user is admin
@@ -204,4 +245,18 @@ class User extends Authenticatable
             self::ROLE_STAFF => 'Staff Member',
         ];
     }
+
+
+
+public function unreadNotifications()
+{
+    return $this->hasMany(Notification::class)->unread();
 }
+
+
+public function getRecentNotifications($limit = 10)
+{
+    return $this->notifications()->with('incident')->take($limit)->get();
+}
+}
+

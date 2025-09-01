@@ -53,22 +53,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    // Staff Routes - For doctors, nurses, and staff members
-    Route::middleware(['role:doctor,nurse,staff'])->prefix('staff')->name('staff.')->group(function () {
-        Route::controller(StaffController::class)->group(function () {
-            // Dashboard
-            Route::get('/dashboard', 'showDashboard')->name('dashboard');
-            Route::get('/incidents', 'showIncidents')->name('incidents');
-            Route::get('/create-incidents', 'showCreateIncidents')->name('create-incidents');
-            Route::get('/report-incidents', 'showReportIncidents')->name('report-incidents');
-            Route::get('/assigned-incidents', 'showAssignedIncidents')->name('assigned-incidents');
-            Route::get('/resources', 'showResources')->name('resources');
-            Route::get('/notifications', 'showNotifications')->name('notifications');
-            Route::get('/profile', 'showProfile')->name('profile');
-            Route::put('/profile', 'updateProfile')->name('profile.update'); 
-
-        });
+   // Staff Routes - For doctors, nurses, and staff members
+Route::middleware(['role:doctor,nurse,staff'])->prefix('staff')->name('staff.')->group(function () {
+    Route::controller(StaffController::class)->group(function () {
+        // Dashboard
+        Route::get('/dashboard', 'showDashboard')->name('dashboard');
+        Route::get('/incidents', 'showIncidents')->name('incidents');
+        Route::post('/incidents', 'storeIncident')->name('incidents.store');
+        Route::get('/incidents/{id}', 'getIncident')->name('incidents.show');
+        Route::post('/incidents/{id}/messages', 'addIncidentMessage')->name('incidents.messages.store');
+        Route::get('/resources', 'showResources')->name('resources');
+        Route::get('/profile', 'showProfile')->name('profile');
+        Route::put('/profile', 'updateProfile')->name('profile.update');
+        
+        // Notifications
+        Route::get('/notifications', 'getNotifications')->name('notifications');
+        Route::post('/notifications/{id}/read', 'markNotificationAsRead')->name('notifications.read');
+        Route::post('/notifications/read-all', 'markAllNotificationsAsRead')->name('notifications.read-all');
     });
+});
 
     // API Routes for AJAX calls
     Route::prefix('api')->name('api.')->group(function () {
