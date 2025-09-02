@@ -38,6 +38,154 @@
   <link href="{{ url('assets/css/bootstrap.min.css?v=' .env('CACHE_VERSION')) }}" rel="stylesheet" type="text/css" />
   <link href="{{ url('assets/css/icons.min.css?v=' .env('CACHE_VERSION')) }}" rel="stylesheet" type="text/css" />
   <link href="{{ url('assets/css/app.min.css?v=' .env('CACHE_VERSION')) }}" rel="stylesheet" type="text/css" />
+ <style>
+.nav-link.active {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    color: #0d6efd !important;
+    font-weight: 600;
+}
+
+/* Fixed notification badge styling */
+.notification-list {
+    position: relative;
+}
+
+.alert-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0 4px;
+    z-index: 10;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Ensure the notification icon container has relative positioning */
+.nav-icon {
+    position: relative;
+    display: inline-block;
+}
+
+/* Better notification dropdown styling */
+.notification-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.notification-menu .dropdown-item {
+    border-bottom: 1px solid #f8f9fa;
+    transition: background-color 0.2s ease;
+}
+
+.notification-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-menu .dropdown-item.bg-light {
+    background-color: #e3f2fd !important;
+    border-left: 3px solid #2196f3;
+}
+
+.avatar-md {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.bg-soft-primary {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.media {
+    display: flex;
+    align-items: flex-start;
+}
+
+.media-body {
+    flex: 1;
+}
+
+.badge-sm {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+}
+.notification-pulse {
+    animation: notificationPulse 2s ease-in-out;
+}
+
+@keyframes notificationPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Subtle update indicators */
+.update-indicator {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Smooth transitions for incident updates */
+.incident-item {
+    transition: all 0.3s ease;
+}
+
+.incident-item.updated {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-left: 3px solid #007bff;
+}
+
+/* Chat message updates */
+.message-item.new-message {
+    animation: slideInMessage 0.5s ease-out;
+}
+
+@keyframes slideInMessage {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading states */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+}
+</style>
 </head>
 
 <body id="body">
@@ -62,7 +210,7 @@
                     </div><!--end /div-->
                 </div><!--end main-icon-menu-body-->
                 <div class="pro-metrica-end">
-                    <a href="#" class="profile">
+                    <a href="{{ route('admin.profile') }}" class="profile">
                         <img src="{{ url('assets/images/users/user-4.jpg') }}" alt="profile-user" class="rounded-circle thumb-sm">
                     </a>
                 </div><!--end pro-metrica-end-->
@@ -87,12 +235,20 @@
                             <h6 class="menu-title">Dashboard</h6>
                         </div>
 
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard</a>
-                            </li><!--end nav-item-->
-                         
-                        </ul><!--end nav-->
+                       <ul class="nav flex-column">
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
+    </li><!--end nav-item-->
+    
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.resources') ? 'active' : '' }}" href="{{ route('admin.resources') }}">Resources</a>
+    </li><!--end nav-item-->
+    
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('admin.incidents') ? 'active' : '' }}" href="{{ route('admin.incidents') }}">Incidents</a>
+    </li><!--end nav-item-->
+    
+</ul><!--end nav-->
                     </div><!-- end Dashboards -->
 
         
@@ -110,67 +266,41 @@
                 <ul class="list-unstyled topbar-nav float-end mb-0">
              
                
-                    <li class="dropdown notification-list">
-                        <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#" role="button"
-                            aria-haspopup="false" aria-expanded="false">
-                            <i class="ti ti-bell"></i>
-                            <span class="alert-badge"></span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-lg pt-0">
-                
-                            <h6 class="dropdown-item-text font-15 m-0 py-3 border-bottom d-flex justify-content-between align-items-center">
-                                Notifications <span class="badge bg-soft-primary badge-pill">2</span>
-                            </h6> 
-                            <div class="notification-menu" data-simplebar>
-                                <!-- item-->
-                                <a href="#" class="dropdown-item py-3">
-                                    <small class="float-end text-muted ps-2">2 min ago</small>
-                                    <div class="media">
-                                        <div class="avatar-md bg-soft-primary">
-                                            <i class="ti ti-chart-arcs"></i>
-                                        </div>
-                                        <div class="media-body align-self-center ms-2 text-truncate">
-                                            <h6 class="my-0 fw-normal text-dark">Your order is placed</h6>
-                                            <small class="text-muted mb-0">Dummy text of the printing and industry.</small>
-                                        </div><!--end media-body-->
-                                    </div><!--end media-->
-                                </a><!--end-item-->
-                                <!-- item-->
-                                <a href="#" class="dropdown-item py-3">
-                                    <small class="float-end text-muted ps-2">10 min ago</small>
-                                    <div class="media">
-                                        <div class="avatar-md bg-soft-primary">
-                                            <i class="ti ti-device-computer-camera"></i>
-                                        </div>
-                                        <div class="media-body align-self-center ms-2 text-truncate">
-                                            <h6 class="my-0 fw-normal text-dark">Meeting with designers</h6>
-                                            <small class="text-muted mb-0">It is a long established fact that a reader.</small>
-                                        </div><!--end media-body-->
-                                    </div><!--end media-->
-                                </a><!--end-item-->
-                     
-                            </div>
-                            <!-- All-->
-                            <a href="javascript:void(0);" class="dropdown-item text-center text-primary">
-                                View all <i class="fi-arrow-right"></i>
-                            </a>
-                        </div>
-                    </li>
+      <li class="dropdown notification-list">
+    <a class="nav-link dropdown-toggle arrow-none nav-icon" data-bs-toggle="dropdown" href="#" role="button"
+        aria-haspopup="false" aria-expanded="false" id="notificationDropdown">
+        <i class="ti ti-bell" style="font-size: 18px;"></i>
+        <span class="alert-badge" id="notificationBadge" style="display: none;">0</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end dropdown-lg pt-0" style="width: 320px;">
+        <h6 class="dropdown-item-text font-15 m-0 py-3 border-bottom d-flex justify-content-between align-items-center">
+            Notifications 
+            <span class="badge bg-primary badge-pill" id="notificationCount">0</span>
+        </h6> 
+        <div class="notification-menu" data-simplebar id="notificationList" style="max-height: 300px;">
+            <div class="text-center py-4">
+                <i class="mdi mdi-bell-off display-4 text-muted"></i>
+                <p class="text-muted mt-2">Loading notifications...</p>
+            </div>
+        </div>
+        <!-- All-->
+        <a href="{{ route('staff.notifications') }}" class="dropdown-item text-center text-primary border-top">
+            View all <i class="mdi mdi-arrow-right"></i>
+        </a>
+    </div>
+</li>
 
                     <li class="dropdown">
                         <a class="nav-link dropdown-toggle nav-user" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="false" aria-expanded="false">
                             <div class="d-flex align-items-center">
-                                <img src="{{ url('empty.svg') }}" alt="profile-user" class="rounded-circle me-2 thumb-sm" />
-                                <div>
-                                    <small class="d-none d-md-block font-11">{{ auth()->user()->getDisplayRole() }}</small>
-                                    <span class="d-none d-md-block fw-semibold font-12">{{ auth()->user()->name }} <i
-                                            class="mdi mdi-chevron-down"></i></span>
-                                </div>
+                                 
+                                    <img src="{{ url('empty.svg') }}" alt="profile-user" class="rounded-circle me-2 thumb-sm" />
+    
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href=""><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
+                            <a class="dropdown-item" href="{{ route('staff.profile') }}"><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
                             
 
                             <div class="dropdown-divider mb-0"></div>
@@ -203,7 +333,7 @@
 
         <!-- Main Content Area -->
         <div class="page-wrapper">
-            <div class="page-content">
+            <div class="page-content-tab">
                 <!-- Flash Messages -->
                 @if (session('success'))
                     <div class="alert alert-success alert-dismissible fade show m-3" role="alert" style="position: relative; z-index: 1050;">
@@ -234,6 +364,17 @@
                 @endif
 
                 @yield('content')
+                   
+                <!--Start Footer-->
+                <!-- Footer Start -->
+                <footer class="footer text-center text-sm-start">
+                    &copy; <script>
+                        document.write(new Date().getFullYear())
+                    </script> Metrica <span class="text-muted d-none d-sm-inline-block float-end">Crafted with <i
+                            class="mdi mdi-heart text-danger"></i> by Odafe Godfrey </span>
+                </footer>
+                <!-- end Footer -->                
+                <!--end footer-->
             </div>
         </div>
     
@@ -244,26 +385,197 @@
     <script src="{{ url('assets/js/app.js?v=' .env('CACHE_VERSION')) }}"></script>
 
     <!-- Auto-hide success alerts -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-hide success alerts after 5 seconds
-            const successAlerts = document.querySelectorAll('.alert-success');
-            successAlerts.forEach(alert => {
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 5000);
-            });
+<script>
+let notificationRefreshInterval;
+let lastNotificationCount = 0;
 
-            // Auto-hide info alerts after 7 seconds
-            const infoAlerts = document.querySelectorAll('.alert-info');
-            infoAlerts.forEach(alert => {
-                setTimeout(() => {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 7000);
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Load notifications on page load
+    loadNotifications();
+    
+    // Start auto-refresh every 30 seconds
+    startNotificationAutoRefresh();
+    
+    // Load notifications when dropdown is clicked
+    document.getElementById('notificationDropdown').addEventListener('click', function() {
+        loadNotifications();
+    });
+    
+    // Pause auto-refresh when user is interacting with notifications
+    const notificationDropdown = document.querySelector('.notification-list .dropdown-menu');
+    if (notificationDropdown) {
+        notificationDropdown.addEventListener('show.bs.dropdown', function() {
+            pauseNotificationAutoRefresh();
         });
-    </script>
+        
+        notificationDropdown.addEventListener('hide.bs.dropdown', function() {
+            startNotificationAutoRefresh();
+        });
+    }
+});
+
+function startNotificationAutoRefresh() {
+    // Clear existing interval
+    if (notificationRefreshInterval) {
+        clearInterval(notificationRefreshInterval);
+    }
+    
+    // Start new interval
+    notificationRefreshInterval = setInterval(function() {
+        loadNotifications(true); // true = silent refresh
+    }, 30000); // 30 seconds
+}
+
+function pauseNotificationAutoRefresh() {
+    if (notificationRefreshInterval) {
+        clearInterval(notificationRefreshInterval);
+        notificationRefreshInterval = null;
+    }
+}
+
+function loadNotifications(silent = false) {
+    fetch('{{ route("staff.notifications") }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateNotificationUI(data.notifications, data.unread_count, silent);
+            }
+        })
+        .catch(error => {
+            if (!silent) {
+                console.error('Error loading notifications:', error);
+            }
+        });
+}
+
+function updateNotificationUI(notifications, unreadCount, silent = false) {
+    // Update badge
+    const badge = document.getElementById('notificationBadge');
+    const countSpan = document.getElementById('notificationCount');
+    
+    // Show subtle animation for new notifications (only if not silent)
+    if (!silent && unreadCount > lastNotificationCount && lastNotificationCount > 0) {
+        showNewNotificationIndicator();
+    }
+    
+    lastNotificationCount = unreadCount;
+    
+    if (unreadCount > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+        countSpan.textContent = unreadCount;
+        countSpan.className = 'badge bg-danger badge-pill';
+        
+        // Subtle pulse animation for new notifications
+        if (!silent && unreadCount > 0) {
+            badge.classList.add('notification-pulse');
+            setTimeout(() => badge.classList.remove('notification-pulse'), 2000);
+        }
+    } else {
+        badge.style.display = 'none';
+        countSpan.textContent = '0';
+        countSpan.className = 'badge bg-secondary badge-pill';
+    }
+    
+    // Update notification list (only if dropdown is not open)
+    const dropdown = document.querySelector('.notification-list .dropdown-menu');
+    const isDropdownOpen = dropdown && dropdown.classList.contains('show');
+    
+    if (!isDropdownOpen) {
+        updateNotificationList(notifications);
+    }
+}
+
+function updateNotificationList(notifications) {
+    const notificationList = document.getElementById('notificationList');
+    let notificationsHtml = '';
+    
+    if (notifications.length > 0) {
+        notifications.forEach(notification => {
+            const isUnread = !notification.is_read;
+            
+            notificationsHtml += `
+                <a href="#" class="dropdown-item py-3 ${isUnread ? 'bg-light' : ''}" 
+                   onclick="markAsRead('${notification.id}', '${notification.incident?.id || ''}')"
+                   style="text-decoration: none;">
+                    <div class="d-flex">
+                        <div class="avatar-md bg-soft-primary flex-shrink-0">
+                            <i class="mdi ${notification.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1 ms-2">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h6 class="my-0 fw-normal text-dark font-13">${notification.title}</h6>
+                                <small class="text-muted">${notification.time_elapsed}</small>
+                            </div>
+                            <p class="text-muted mb-0 font-12 text-truncate" style="max-width: 200px;">
+                                ${notification.message}
+                            </p>
+                            ${isUnread ? '<span class="badge bg-primary badge-sm mt-1">New</span>' : ''}
+                        </div>
+                    </div>
+                </a>
+            `;
+        });
+    } else {
+        notificationsHtml = `
+            <div class="text-center py-4">
+                <i class="mdi mdi-bell-off display-4 text-muted"></i>
+                <p class="text-muted mt-2 mb-0">No notifications yet</p>
+            </div>
+        `;
+    }
+    
+    notificationList.innerHTML = notificationsHtml;
+}
+
+function showNewNotificationIndicator() {
+    // Create a subtle toast notification
+    const toast = document.createElement('div');
+    toast.className = 'toast align-items-center text-white bg-primary border-0 position-fixed';
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999;';
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="mdi mdi-bell me-2"></i>New notification received
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast, { delay: 3000 });
+    bsToast.show();
+    
+    // Remove toast after it's hidden
+    toast.addEventListener('hidden.bs.toast', () => {
+        toast.remove();
+    });
+}
+
+// Rest of your existing notification functions...
+function markAsRead(notificationId, incidentId = '') {
+    fetch(`/staff/notifications/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadNotifications(); // Refresh notifications
+            
+            // If there's an incident ID, redirect to it
+            if (incidentId) {
+                window.location.href = `{{ route('staff.incidents') }}#incident-${incidentId}`;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error marking notification as read:', error);
+    });
+}
+</script>
 </body>
 </html>

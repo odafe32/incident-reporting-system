@@ -260,9 +260,6 @@
         </div><!--end sidebarINCIDENT-->
     </li><!--end nav-item-->
 
-    <li class="nav-item">
-        <a class="nav-link {{ request()->routeIs('staff.resources') ? 'active' : '' }}" href="{{ route('staff.resources') }}">Resources</a>
-    </li><!--end nav-item-->
     
 </ul><!--end nav-->
                     </div><!-- end Dashboards -->
