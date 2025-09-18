@@ -250,6 +250,8 @@ class AdminController extends Controller
                 'staffMembers' => $staffMembers,
             ];
 
+
+            
             return view('admin.incidents')->with($viewData);
 
         } catch (\Exception $e) {
