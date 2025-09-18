@@ -24,6 +24,10 @@ class AdminController extends Controller
 {
     public function showDashboard()
     {
+          $user = Auth::user();
+
+     
+
         try {
             // Get basic statistics
             $totalIncidents = Incident::count();
@@ -132,6 +136,7 @@ class AdminController extends Controller
                 ],
                 'severity' => $severityData,
             ];
+            
 
             $viewData = [
                 'meta_title'=> 'Dashboard | Metrica, incident reporting system',
@@ -143,6 +148,7 @@ class AdminController extends Controller
                 'resourceStats' => $resourceStats,
                 'recentActivities' => $recentActivities,
                 'chartData' => $chartData,
+                'user' => $user,
             ];
 
             return view('admin.dashboard')->with($viewData);
@@ -254,10 +260,12 @@ class AdminController extends Controller
 
     public function showReources()
     {
+         $user = Auth::user();
         $viewData = [
            'meta_title'=> 'Create Resources | Metrica, incident reporting system',
            'meta_desc'=> 'Metrica, hospital management, incident reporting, resource allocation, healthcare dashboard, emergency response system',
            'meta_image'=> url('assets/images/favicon.ico'),
+                 'user' => $user,
         ];
 
         return view('admin.create-resources')->with($viewData);
@@ -861,4 +869,69 @@ class AdminController extends Controller
                 return 'mdi-information';
         }
     }
+        /**
+     * Show profile page
+     */
+    public function ViewProfile()
+    {
+        $user = Auth::user();
+
+        $viewData = [
+            'meta_title' => 'Profile | Metrica, incident reporting system',
+            'meta_desc' => 'Hospital management staff profile',
+            'meta_image' => url('assets/images/favicon.ico'),
+            'user' => $user,
+        ];
+
+        return view('admin.profile')->with($viewData);
+    }
+
+    /**
+     * Update profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'current_password' => 'nullable|required_with:password',
+            'password' => 'nullable|min:8|confirmed',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Check current password if new password is provided
+        if ($request->filled('password')) {
+            if (!Hash::check($request->current_password, $user->password)) {
+                return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+            }
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('profile_image')) {
+            // Delete old image if exists
+            if ($user->profile_image) {
+                Storage::disk('public')->delete($user->profile_image);
+            }
+            
+            // Store new image
+            $imagePath = $request->file('profile_image')->store('profile-images', 'public');
+            $user->profile_image = $imagePath;
+        }
+
+        // Update user data
+        $user->name = $request->name;
+        $user->email = $request->email;
+        
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        
+        $user->save();
+
+        return back()->with('success', 'Profile updated successfully.');
+    }
+
+
 }

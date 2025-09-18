@@ -41,7 +41,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/incidents', 'showIncidents')->name('incidents');
             Route::get('/create-resources', 'showReources')->name('create-resources');
             Route::get('/resources', 'showviewResources')->name('resources');
-            Route::get('/profile', 'showProfile')->name('profile');
+            Route::get('/notifications', 'ViewNotifications')->name('notifications');
+            Route::get('/profile', 'ViewProfile')->name('profile');
+            Route::put('/profile', 'updateProfile')->name('profile.update');
             
             // Incident Management
             Route::get('/incidents/{id}', 'getIncident')->name('incidents.show');

@@ -209,11 +209,7 @@
                         </ul><!--end nav-->
                     </div><!--end /div-->
                 </div><!--end main-icon-menu-body-->
-                <div class="pro-metrica-end">
-                    <a href="{{ route('admin.profile') }}" class="profile">
-                        <img src="{{ url('assets/images/users/user-4.jpg') }}" alt="profile-user" class="rounded-circle thumb-sm">
-                    </a>
-                </div><!--end pro-metrica-end-->
+                
             </div>
             <!--end main-icon-menu-->
 
@@ -284,7 +280,7 @@
             </div>
         </div>
         <!-- All-->
-        <a href="{{ route('staff.notifications') }}" class="dropdown-item text-center text-primary border-top">
+        <a href="{{ route('admin.notifications') }}" class="dropdown-item text-center text-primary border-top">
             View all <i class="mdi mdi-arrow-right"></i>
         </a>
     </div>
@@ -294,13 +290,21 @@
                         <a class="nav-link dropdown-toggle nav-user" data-bs-toggle="dropdown" href="#" role="button"
                             aria-haspopup="false" aria-expanded="false">
                             <div class="d-flex align-items-center">
-                                 
+                                  @if($user->profile_image)
+                                    <img src="{{ Storage::url($user->profile_image) }}" alt="Profile Image" class="rounded-circle me-2 thumb-sm" id="profilePreview">
+                                @else
                                     <img src="{{ url('empty.svg') }}" alt="profile-user" class="rounded-circle me-2 thumb-sm" />
-    
+                                @endif
+                              
+                                <div>
+                                    <small class="d-none d-md-block font-11">{{ auth()->user()->getDisplayRole() }}</small>
+                                    <span class="d-none d-md-block fw-semibold font-12">{{ auth()->user()->name }} <i
+                                            class="mdi mdi-chevron-down"></i></span>
+                                </div>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="{{ route('staff.profile') }}"><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
+                            <a class="dropdown-item" href="{{ route('admin.profile') }}"><i class="ti ti-user font-16 me-1 align-text-bottom"></i> Profile</a>
                             
 
                             <div class="dropdown-divider mb-0"></div>
@@ -313,6 +317,7 @@
                             </form>
 
                         </div>
+                    </li><!--end topbar-profile-->
                     </li><!--end topbar-profile-->
                
                 </ul><!--end topbar-nav-->
@@ -434,7 +439,7 @@ function pauseNotificationAutoRefresh() {
 }
 
 function loadNotifications(silent = false) {
-    fetch('{{ route("staff.notifications") }}')
+    fetch('{{ route("admin.notifications") }}')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -554,7 +559,7 @@ function showNewNotificationIndicator() {
 
 // Rest of your existing notification functions...
 function markAsRead(notificationId, incidentId = '') {
-    fetch(`/staff/notifications/${notificationId}/read`, {
+    fetch(`/admin/notifications/${notificationId}/read`, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -568,7 +573,7 @@ function markAsRead(notificationId, incidentId = '') {
             
             // If there's an incident ID, redirect to it
             if (incidentId) {
-                window.location.href = `{{ route('staff.incidents') }}#incident-${incidentId}`;
+                window.location.href = `{{ route('admin.incidents') }}#incident-${incidentId}`;
             }
         }
     })
